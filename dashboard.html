@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Game Hub — личный кабинет. Управляйте профилем, просматривайте заказы и историю покупок." />
+  <title>Game Hub — Личный кабинет</title>
+
+  <!-- Design System & Styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body>
+  <!-- Site Header (Shared Component) -->
+  <header id="main-header" class="site-header" role="banner"></header>
+
+  <!-- Main Dashboard Content -->
+  <main class="dashboard-page" role="main">
+    <div class="container">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div class="dashboard-title-row">
+          <div>
+            <h1 class="auth-title">Личный кабинет</h1>
+            <p class="text-secondary text-sm">
+              Добро пожаловать, <strong id="profile-greeting" class="text-primary">Пользователь</strong>
+            </p>
+          </div>
+          <div style="display: flex; gap: var(--space-3); align-items: center;">
+            <a href="admin.html" class="btn btn-primary" id="btn-dashboard-admin" style="display: none;">
+              Панель администратора
+            </a>
+            <button type="button" class="btn btn-ghost" id="btn-dashboard-logout">
+              Выйти из аккаунта
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feedback Banner -->
+      <div id="dashboard-banner" class="feedback-banner" role="status"></div>
+
+      <!-- Grid: Left = Profile Card, Right = Orders & Reviews Placeholders -->
+      <div class="dashboard-grid">
+        <!-- ── PROFILE SECTION ─────────────────────────────────────────── -->
+        <section class="dashboard-card" aria-labelledby="profile-heading">
+          <h2 class="dashboard-card-title" id="profile-heading">
+            Профиль
+            <span id="profile-role-badge" class="role-tag">Пользователь</span>
+          </h2>
+
+          <div class="profile-avatar-row">
+            <div id="profile-avatar" class="avatar-large" aria-label="Аватар пользователя">?</div>
+            <div class="profile-meta-block">
+              <span class="text-xs text-secondary">Дата регистрации</span>
+              <span class="text-sm font-medium" id="profile-created-date">Загрузка...</span>
+            </div>
+          </div>
+
+          <form id="form-profile" novalidate>
+            <!-- Display Name (Editable) -->
+            <div class="form-group">
+              <label for="profile-display-name" class="form-label">Отображаемое имя</label>
+              <input
+                type="text"
+                id="profile-display-name"
+                class="form-input"
+                required
+                autocomplete="name"
+              />
+              <span class="form-helper">Отображается в отзывах и шапке сайта</span>
+            </div>
+
+            <!-- Email (Readonly) -->
+            <div class="form-group">
+              <label for="profile-email" class="form-label">Электронная почта</label>
+              <input
+                type="email"
+                id="profile-email"
+                class="form-input"
+                readonly
+                disabled
+              />
+              <span class="form-helper">Привязана к учетной записи (только для чтения)</span>
+            </div>
+
+            <!-- Bio (Editable) -->
+            <div class="form-group">
+              <label for="profile-bio" class="form-label">О себе</label>
+              <textarea
+                id="profile-bio"
+                class="form-input form-textarea"
+                placeholder="Расскажите о любимых игровых жанрах или платформах..."
+                rows="4"
+              ></textarea>
+            </div>
+
+            <div class="form-group" style="margin-top: var(--space-6);">
+              <button type="submit" class="btn btn-primary btn-block" id="btn-save-profile">
+                Сохранить изменения
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- ── REAL SECTIONS (Orders & Reviews — Stage 4) ─────────────────── -->
+        <div class="dashboard-content-area">
+          <!-- Order History -->
+          <section class="dashboard-card" aria-labelledby="orders-heading">
+            <h2 class="dashboard-card-title" id="orders-heading">История заказов</h2>
+            <div id="orders-list-container" class="orders-list-container">
+              <div class="skeleton" style="height: 100px;"></div>
+            </div>
+          </section>
+
+          <!-- Review Management -->
+          <section class="dashboard-card" aria-labelledby="reviews-heading">
+            <h2 class="dashboard-card-title" id="reviews-heading">Мои отзывы</h2>
+            <div id="dashboard-reviews-container" class="dashboard-reviews-list">
+              <div class="skeleton" style="height: 100px;"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── MODAL: EDIT REVIEW (Stage 4) ──────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-edit-review" role="dialog" aria-modal="true" aria-labelledby="modal-edit-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-edit-title">Редактирование отзыва</h2>
+        <button type="button" class="btn-close-modal" id="btn-close-edit-modal" aria-label="Закрыть">&times;</button>
+      </div>
+
+      <form id="form-dashboard-edit-review">
+        <input type="hidden" id="edit-review-id" />
+        <input type="hidden" id="edit-review-game-id" />
+
+        <div class="form-group">
+          <label class="form-label">Оценка</label>
+          <div class="star-rating-picker" id="edit-star-picker" role="radiogroup" aria-label="Оценка">
+            <button type="button" class="star-picker-btn" data-rating="1">★</button>
+            <button type="button" class="star-picker-btn" data-rating="2">★</button>
+            <button type="button" class="star-picker-btn" data-rating="3">★</button>
+            <button type="button" class="star-picker-btn" data-rating="4">★</button>
+            <button type="button" class="star-picker-btn" data-rating="5">★</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="edit-review-text" class="form-label">Текст отзыва</label>
+          <textarea id="edit-review-text" class="form-input form-textarea" rows="4" required></textarea>
+        </div>
+
+        <div id="edit-review-feedback" class="feedback-banner" role="status"></div>
+
+        <div class="flex items-center gap-4" style="margin-top: var(--space-4);">
+          <button type="submit" class="btn btn-primary" id="btn-save-edit-review">Сохранить</button>
+          <button type="button" class="btn btn-ghost" id="btn-cancel-edit-review">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts (ES6 Modules) -->
+  <script type="module" src="js/header.js"></script>
+  <script type="module" src="js/dashboard-page.js"></script>
+</body>
+</html>

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Game Hub — вход и регистрация. Войдите в учетную запись или зарегистрируйтесь, чтобы покупать игры и оставлять отзывы." />
+  <title>Game Hub — Вход / Регистрация</title>
+
+  <!-- Design System & Styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-page-body">
+  <!-- Site Header (Shared Component) -->
+  <header id="main-header" class="site-header" role="banner"></header>
+
+  <!-- Main Auth Page Content -->
+  <main class="auth-page" role="main">
+    <div class="auth-container">
+      <div class="auth-header">
+        <h1 class="auth-title">Аккаунт</h1>
+        <p class="auth-subtitle">Войдите или создайте учетную запись Game Hub</p>
+      </div>
+
+      <!-- Tabs: Login vs Register -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tab-login" role="tab" aria-selected="true">
+          Войти
+        </button>
+        <button type="button" class="auth-tab-btn" id="tab-register" role="tab" aria-selected="false">
+          Регистрация
+        </button>
+      </div>
+
+      <!-- Feedback Banners -->
+      <div id="banner-error" class="feedback-banner error" role="alert"></div>
+      <div id="banner-success" class="feedback-banner success" role="status"></div>
+
+      <!-- ── LOGIN FORM ────────────────────────────────────────────────── -->
+      <form id="form-login" novalidate>
+        <div class="form-group">
+          <label for="login-email" class="form-label">Электронная почта</label>
+          <input
+            type="email"
+            id="login-email"
+            class="form-input"
+            placeholder="gamer@example.com"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <div class="form-row-between">
+            <label for="login-password" class="form-label" style="margin-bottom: 0;">Пароль</label>
+            <button type="button" id="link-forgot-password" class="link-subtle">
+              Забыли пароль?
+            </button>
+          </div>
+          <input
+            type="password"
+            id="login-password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="form-group" style="margin-top: var(--space-6);">
+          <button type="submit" class="btn btn-primary btn-block">
+            Войти
+          </button>
+        </div>
+      </form>
+
+      <!-- ── REGISTER FORM ─────────────────────────────────────────────── -->
+      <form id="form-register" style="display: none;" novalidate>
+        <div class="form-group">
+          <label for="register-name" class="form-label">Имя пользователя</label>
+          <input
+            type="text"
+            id="register-name"
+            class="form-input"
+            placeholder="Никнейм или полное имя"
+            required
+            autocomplete="name"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="register-email" class="form-label">Электронная почта</label>
+          <input
+            type="email"
+            id="register-email"
+            class="form-input"
+            placeholder="gamer@example.com"
+            required
+            autocomplete="email"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="register-password" class="form-label">Пароль (минимум 6 символов)</label>
+          <input
+            type="password"
+            id="register-password"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="register-password-confirm" class="form-label">Повторите пароль</label>
+          <input
+            type="password"
+            id="register-password-confirm"
+            class="form-input"
+            placeholder="••••••••"
+            required
+            autocomplete="new-password"
+          />
+        </div>
+
+        <div class="form-group" style="margin-top: var(--space-6);">
+          <button type="submit" class="btn btn-primary btn-block">
+            Зарегистрироваться
+          </button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- ── FORGOT PASSWORD MODAL ─────────────────────────────────────────── -->
+  <div class="modal-overlay" id="modal-forgot-password" role="dialog" aria-modal="true" aria-labelledby="modal-reset-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-reset-title">Сброс пароля</h2>
+        <button type="button" class="btn-close-modal" id="btn-close-modal" aria-label="Закрыть">&times;</button>
+      </div>
+
+      <p class="text-secondary text-sm" style="margin-bottom: var(--space-4);">
+        Введите email, указанный при регистрации. Мы отправим ссылку для создания нового пароля.
+      </p>
+
+      <div id="modal-banner" class="feedback-banner" role="alert"></div>
+
+      <form id="form-forgot-password">
+        <div class="form-group">
+          <label for="reset-email" class="form-label">Email</label>
+          <input
+            type="email"
+            id="reset-email"
+            class="form-input"
+            placeholder="gamer@example.com"
+            required
+          />
+        </div>
+        <div class="form-group" style="margin-top: var(--space-4);">
+          <button type="submit" class="btn btn-primary btn-block">
+            Отправить ссылку
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts (ES6 Modules) -->
+  <script type="module" src="js/header.js"></script>
+  <script type="module" src="js/login-page.js"></script>
+</body>
+</html>

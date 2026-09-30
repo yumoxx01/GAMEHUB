@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Game Hub — панель администратора. Управление каталогом игр, заказами и пользователями." />
+  <title>Game Hub — Панель администратора</title>
+
+  <!-- Design System & Styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <!-- Site Header (Shared Component) -->
+  <header id="main-header" class="site-header" role="banner"></header>
+
+  <!--
+    Admin Content Container:
+    Kept strictly hidden (style="display: none;") until the client-side route guard
+    verifies users/{uid}.role === 'admin' to prevent leaking admin data to unauthorized visitors.
+  -->
+  <div id="admin-content-container" style="display: none;">
+    <main class="container admin-page" role="main">
+      <!-- Admin Header -->
+      <div class="admin-header">
+        <div class="admin-title-row">
+          <h1 class="admin-title">Панель управления</h1>
+          <span class="admin-pill">ADMIN</span>
+        </div>
+        <div>
+          <button type="button" class="btn btn-primary" id="btn-add-game">
+            + Добавить игру
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Overview (Rubric Basic Stats) -->
+      <section class="stats-grid" aria-label="Статистика платформы">
+        <div class="stat-card">
+          <span class="stat-label">Всего игр в каталоге</span>
+          <span class="stat-value" id="stat-games-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Пользователей</span>
+          <span class="stat-value" id="stat-users-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Всего заказов</span>
+          <span class="stat-value" id="stat-orders-count">0</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Выручка (завершенные)</span>
+          <span class="stat-value accent" id="stat-revenue-total">0 ₸</span>
+        </div>
+      </section>
+
+      <!-- Navigation Tabs -->
+      <nav class="admin-tabs" role="tablist" aria-label="Разделы панели администратора">
+        <button type="button" class="admin-tab-btn active" data-tab="panel-games" role="tab">
+          Игры (Каталог)
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="panel-users" role="tab">
+          Пользователи
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="panel-orders" role="tab">
+          Заказы
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="panel-reviews" role="tab">
+          Модерация отзывов
+        </button>
+        <button type="button" class="admin-tab-btn" data-tab="panel-database" role="tab">
+          База данных (Seed)
+        </button>
+      </nav>
+
+      <!-- ── TAB 1: GAMES MANAGEMENT (CRUD & LIVE ON_SNAPSHOT) ────────── -->
+      <section class="admin-panel active" id="panel-games" role="tabpanel">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Каталог игр</h2>
+          <span class="text-xs text-secondary">Синхронизируется в реальном времени</span>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th style="width: 80px;">Обложка</th>
+                <th>Название / Жанры</th>
+                <th>Платформы</th>
+                <th>Цена</th>
+                <th>Оценка</th>
+                <th>Hero</th>
+                <th style="width: 160px;">Действия</th>
+              </tr>
+            </thead>
+            <tbody id="games-table-body">
+              <tr>
+                <td colspan="7" class="text-secondary" style="padding: var(--space-6);">Загрузка игр...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── TAB 2: USER MANAGEMENT (ROLE TOGGLE) ──────────────────────── -->
+      <section class="admin-panel" id="panel-users" role="tabpanel">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Управление пользователями</h2>
+          <span class="text-xs text-secondary">Назначение и отзыв прав администратора</span>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Имя пользователя</th>
+                <th>Email</th>
+                <th>Текущая роль</th>
+                <th>Дата регистрации</th>
+                <th style="width: 180px;">Действие</th>
+              </tr>
+            </thead>
+            <tbody id="users-table-body">
+              <tr>
+                <td colspan="5" class="text-secondary" style="padding: var(--space-6);">Загрузка...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── TAB 3: ORDER STATUS MANAGEMENT ────────────────────────────── -->
+      <section class="admin-panel" id="panel-orders" role="tabpanel">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Управление заказами</h2>
+          <span class="text-xs text-secondary">Все заказы пользователей платформы</span>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>ID Заказа</th>
+                <th>Пользователь</th>
+                <th>Дата</th>
+                <th>Состав заказа</th>
+                <th>Сумма</th>
+                <th style="width: 170px;">Статус</th>
+              </tr>
+            </thead>
+            <tbody id="orders-table-body">
+              <tr>
+                <td colspan="6" class="text-secondary" style="padding: var(--space-6);">Загрузка...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── TAB 4: REVIEW MODERATION ──────────────────────────────────── -->
+      <section class="admin-panel" id="panel-reviews" role="tabpanel">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Модерация отзывов</h2>
+          <span class="text-xs text-secondary">Удаление нарушающих правила отзывов с авто-пересчетом рейтинга игры</span>
+        </div>
+        <div class="table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Игра</th>
+                <th>Автор</th>
+                <th>Оценка</th>
+                <th>Текст отзыва</th>
+                <th>Дата</th>
+                <th style="width: 100px;">Действие</th>
+              </tr>
+            </thead>
+            <tbody id="reviews-table-body">
+              <tr>
+                <td colspan="6" class="text-secondary" style="padding: var(--space-6);">Загрузка...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── TAB 5: DATABASE SEED & TOOLS ──────────────────────────────── -->
+      <section class="admin-panel" id="panel-database" role="tabpanel">
+        <div class="panel-header-row">
+          <h2 class="panel-title">Обслуживание базы данных</h2>
+        </div>
+        <div style="background-color: var(--color-surface); border: 1px solid var(--color-divider); padding: var(--space-6); max-width: 620px;">
+          <h3 style="font-size: var(--font-size-md); font-weight: 700; text-transform: uppercase; margin-bottom: var(--space-2);">
+            Инициализация каталога (Seed)
+          </h3>
+          <p class="text-secondary text-sm" style="margin-bottom: var(--space-4);">
+            Записывает образцы игр (Cyberpunk 2077, Elden Ring, Zelda TotK, Hades) в Firestore. Функция идемпотентна и пропускает уже существующие документы.
+          </p>
+          <button type="button" class="btn btn-primary" id="btn-admin-run-seed">
+            Заполнить базу игр (Seed)
+          </button>
+          <div id="admin-seed-feedback" class="text-sm font-medium" style="margin-top: var(--space-3);"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ── MODAL: GAME EDITOR (CREATE / EDIT) ─────────────────────────────── -->
+  <div class="modal-overlay modal-overlay-large" id="modal-game-editor" role="dialog" aria-modal="true" aria-labelledby="game-modal-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="game-modal-title">Добавить игру</h2>
+        <button type="button" class="btn-close-modal" id="btn-close-game-modal" aria-label="Закрыть">&times;</button>
+      </div>
+
+      <div id="game-editor-feedback" class="feedback-banner" role="status"></div>
+
+      <form id="form-game-editor" novalidate>
+        <input type="hidden" id="editing-game-id" />
+
+        <!-- General Info -->
+        <div class="form-group">
+          <label for="field-title" class="form-label">Название игры *</label>
+          <input type="text" id="field-title" class="form-input" placeholder="Например: Cyberpunk 2077" required />
+        </div>
+
+        <div class="form-group">
+          <label for="field-description" class="form-label">Описание *</label>
+          <textarea id="field-description" class="form-input form-textarea" rows="4" placeholder="Подробное описание сюжета и геймплея..." required></textarea>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label for="field-developer" class="form-label">Разработчик</label>
+            <input type="text" id="field-developer" class="form-input" placeholder="CD Projekt RED" />
+          </div>
+          <div class="form-group">
+            <label for="field-publisher" class="form-label">Издатель</label>
+            <input type="text" id="field-publisher" class="form-input" placeholder="CD Projekt" />
+          </div>
+        </div>
+
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label for="field-price" class="form-label">Цена (₸) *</label>
+            <input type="number" id="field-price" class="form-input" min="0" step="1" placeholder="14990" required />
+          </div>
+          <div class="form-group">
+            <label for="field-release-date" class="form-label">Дата выхода</label>
+            <input type="date" id="field-release-date" class="form-input" />
+          </div>
+        </div>
+
+        <!-- Checkbox: Featured in Hero rotation -->
+        <div class="form-group" style="margin-block: var(--space-2);">
+          <label class="checkbox-label" style="font-weight: 600;">
+            <input type="checkbox" id="field-featured" />
+            <span>В центре внимания (Featured: показ в баннере на главной)</span>
+          </label>
+        </div>
+
+        <!-- Multi-select: Genres -->
+        <div class="form-section-title">Жанры</div>
+        <div class="checkbox-group" id="game-genres-checkboxes"></div>
+
+        <!-- Multi-select: Platforms -->
+        <div class="form-section-title">Платформы *</div>
+        <div class="checkbox-group" id="game-platforms-checkboxes"></div>
+
+        <!-- Media Uploads (Storage) -->
+        <div class="form-section-title">Медиафайлы (Firebase Storage)</div>
+
+        <!-- Cover -->
+        <div class="form-group">
+          <label class="form-label">Обложка игры</label>
+          <div class="file-upload-box">
+            <input type="file" id="field-cover-file" accept="image/*" class="form-input" style="padding: var(--space-2);" />
+            <span class="form-helper">Или укажите прямую ссылку:</span>
+            <input type="url" id="field-cover-url" class="form-input" placeholder="https://..." style="margin-top: var(--space-1);" />
+          </div>
+        </div>
+
+        <!-- Screenshots -->
+        <div class="form-group">
+          <label class="form-label">Скриншоты (мультивыбор)</label>
+          <div class="file-upload-box">
+            <input type="file" id="field-screenshots-files" accept="image/*" multiple class="form-input" style="padding: var(--space-2);" />
+            <span class="form-helper">Вы можете выбрать сразу несколько изображений для галереи.</span>
+          </div>
+        </div>
+
+        <!-- Video -->
+        <div class="form-group">
+          <label class="form-label">Трейлер / Видео</label>
+          <div class="file-upload-box">
+            <input type="file" id="field-video-file" accept="video/*" class="form-input" style="padding: var(--space-2);" />
+            <span class="form-helper">Или укажите ссылку на видеофайл:</span>
+            <input type="url" id="field-video-url" class="form-input" placeholder="https://..." style="margin-top: var(--space-1);" />
+          </div>
+        </div>
+
+        <!-- Hardware Requirements -->
+        <div class="form-section-title">Системные требования</div>
+        <div class="grid grid-2">
+          <!-- Min -->
+          <div class="req-col">
+            <h4 class="req-col-title">Минимальные требования</h4>
+            <div class="form-group">
+              <label class="form-label">CPU</label>
+              <input type="text" id="field-req-min-cpu" class="form-input" placeholder="Intel Core i5-6400" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">GPU</label>
+              <input type="text" id="field-req-min-gpu" class="form-input" placeholder="NVIDIA GTX 1060" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">RAM</label>
+              <input type="text" id="field-req-min-ram" class="form-input" placeholder="8 ГБ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Накопитель</label>
+              <input type="text" id="field-req-min-storage" class="form-input" placeholder="50 ГБ" />
+            </div>
+          </div>
+
+          <!-- Rec -->
+          <div class="req-col">
+            <h4 class="req-col-title">Рекомендованные требования</h4>
+            <div class="form-group">
+              <label class="form-label">CPU</label>
+              <input type="text" id="field-req-rec-cpu" class="form-input" placeholder="Intel Core i7-8700K" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">GPU</label>
+              <input type="text" id="field-req-rec-gpu" class="form-input" placeholder="NVIDIA RTX 2060" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">RAM</label>
+              <input type="text" id="field-req-rec-ram" class="form-input" placeholder="16 ГБ" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Накопитель</label>
+              <input type="text" id="field-req-rec-storage" class="form-input" placeholder="50 ГБ SSD" />
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-4" style="margin-top: var(--space-8); padding-top: var(--space-4); border-top: 1px solid var(--color-divider);">
+          <button type="submit" class="btn btn-primary" id="btn-save-game">Сохранить игру</button>
+          <button type="button" class="btn btn-ghost" id="btn-cancel-game">Отмена</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts (ES6 Modules) -->
+  <script type="module" src="js/header.js"></script>
+  <script type="module" src="js/admin-page.js"></script>
+</body>
+</html>

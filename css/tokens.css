@@ -1,0 +1,76 @@
+:root {
+  /* surfaces, from farthest to closest */
+  --bg-rail: #0e1116;      /* header, footer */
+  --bg-page: #13161c;
+  --bg-page-bottom: #0a0c0f; /* subtle vertical gradient end */
+  --surface-1: #1a1e26;    /* cards, panels */
+  --surface-2: #232833;    /* hover, inputs */
+  --surface-3: #2d3340;    /* selected, inset */
+  --border: #2a303c;
+  --border-strong: #3a4252;
+
+  /* text (never pure white) */
+  --text: #d7dde6;
+  --text-secondary: #98a1af;
+  --text-faint: #8a93a1;
+  --text-strong: #f2f5f9;  /* headings, hover */
+
+  /* brass = navigation, selection, links */
+  --accent: #b9a06a;
+  --accent-hover: #d2ba82;
+
+  /* green = buying actions only */
+  --buy: #4d7a22;
+  --buy-hover: #5c9029;
+  --on-buy: #f2f5f9;
+
+  --danger: #b4493c;       /* destructive admin actions only */
+
+  --radius-control: 2px;
+  --radius-media: 0;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 150ms;
+  --dur-med: 250ms;
+
+  --font: 'IBM Plex Sans', system-ui, sans-serif;  /* load 400/500/600 from Google Fonts */
+
+  /* Strict 4px spacing scale (4, 8, 12, 16, 24, 32, 48, 72) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-18: 72px;
+
+  /* Layout */
+  --max-width: 1280px;
+  --content-padding: var(--space-8);
+  --header-height: 56px;
+
+  /* Z-index layers */
+  --z-header: 100;
+  --z-dropdown: 200;
+  --z-modal: 300;
+
+  /* Aliases for semantic mapping */
+  --color-bg: var(--bg-page);
+  --color-surface: var(--surface-1);
+  --color-surface-hover: var(--surface-2);
+  --color-divider: var(--border);
+  --color-text-primary: var(--text-strong);
+  --color-text-secondary: var(--text-secondary);
+  --color-accent: var(--accent);
+  --color-danger: var(--danger);
+  --color-success: var(--buy);
+  --border-radius: var(--radius-control);
+  --font-family: var(--font);
+  --shadow: none;
+  --transition-fast: var(--dur-fast) var(--ease);
+  --transition-base: var(--dur-med) var(--ease);
+  --transition-slow: 400ms var(--ease);
+}

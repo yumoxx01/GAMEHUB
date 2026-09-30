@@ -1,0 +1,323 @@
+/* ==========================================================================
+   admin.css — Admin Dashboard Styles
+   Dark minimal storefront: denser tables (40px rows), row hover, danger on delete
+   ========================================================================== */
+
+.admin-page {
+  padding-block: var(--space-6) var(--space-12);
+  text-align: left;
+}
+
+.admin-header {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.admin-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.admin-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+/* ── Stats Cards Grid ────────────────────────────────────────────────────── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.stat-card {
+  background-color: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-media);
+  padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-faint);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-strong);
+}
+
+.stat-value.accent {
+  color: var(--text-strong);
+}
+
+/* ── Admin Navigation Tabs ───────────────────────────────────────────────── */
+.admin-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--space-6);
+  overflow-x: auto;
+  gap: 2px;
+}
+
+.admin-tab-btn {
+  padding: var(--space-2) var(--space-4);
+  height: 36px;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--dur-fast) var(--ease);
+}
+
+.admin-tab-btn:hover {
+  color: var(--text-strong);
+  background-color: var(--surface-1);
+}
+
+.admin-tab-btn.active {
+  color: var(--link);
+  background-color: var(--surface-2);
+  border-bottom-color: var(--link);
+  font-weight: 600;
+}
+
+/* ── Admin Tab Panels ────────────────────────────────────────────────────── */
+.admin-panel {
+  display: none;
+}
+
+.admin-panel.active {
+  display: block;
+}
+
+.panel-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+  flex-wrap: wrap;
+  gap: var(--space-4);
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-strong);
+}
+
+/* ── Admin Tables (Denser 40px table rows, row hover --surface-2) ────────── */
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  background-color: var(--surface-1);
+  border-radius: var(--radius-media);
+  margin-bottom: var(--space-6);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.admin-table th {
+  height: 36px;
+  padding: 0 var(--space-3);
+  background-color: var(--bg-rail);
+  color: var(--text-faint);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.admin-table td {
+  height: 40px;
+  padding: 0 var(--space-3);
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.review-stars-col {
+  color: var(--link);
+  letter-spacing: 2px;
+}
+
+.admin-table tbody tr {
+  transition: background-color var(--dur-fast) var(--ease);
+}
+
+.admin-table tbody tr:hover td {
+  background-color: var(--surface-2);
+}
+
+.table-thumb {
+  width: 48px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-media);
+  display: block;
+}
+
+/* Row actions visible on hover */
+.table-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  opacity: 0.85;
+  transition: opacity var(--dur-fast) var(--ease);
+}
+
+.admin-table tr:hover .table-actions {
+  opacity: 1;
+}
+
+/* Role badge */
+.role-badge-user {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  border-radius: var(--radius-control);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.role-badge-admin {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  background-color: var(--surface-3);
+  border: 1px solid var(--link);
+  color: var(--link);
+  border-radius: var(--radius-control);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.select-order-status {
+  background-color: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-control);
+  color: var(--text);
+  padding: 0 var(--space-2);
+  height: 28px;
+  font-family: var(--font);
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.select-order-status:focus {
+  outline: none;
+  border-color: var(--link);
+}
+
+/* ── Game Form Modal & Drawer ────────────────────────────────────────────── */
+.modal-overlay-large .modal-card {
+  max-width: 760px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.form-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--link);
+  padding-bottom: var(--space-1);
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  border-bottom: 1px solid var(--border);
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: var(--space-2) 0;
+}
+
+.checkbox-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.file-upload-box {
+  border: 1px dashed var(--border-strong);
+  padding: var(--space-4);
+  background-color: var(--surface-2);
+  border-radius: var(--radius-control);
+  margin-bottom: var(--space-3);
+}
+
+.file-previews-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.file-thumb-preview {
+  width: 64px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-media);
+}
+
+/* ── Responsive adjustments ──────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}

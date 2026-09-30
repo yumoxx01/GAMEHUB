@@ -1,0 +1,124 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // Вспомогательные функции
+    // ─────────────────────────────────────────────────────────────────────────
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isUser(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function userDocExists() {
+      return isSignedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && userDocExists() && getUserData().role == 'admin';
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 1. users/{uid}
+    // ─────────────────────────────────────────────────────────────────────────
+    match /users/{uid} {
+      // Пользователь видит свой профиль, админ видит все
+      allow read: if isUser(uid) || isAdmin();
+
+      // При регистрации роль по умолчанию только 'user' (админ может создавать любых)
+      allow create: if (isUser(uid) && request.resource.data.role == 'user') || isAdmin();
+
+      // Обычный пользователь не может повысить свою роль до admin
+      allow update: if (
+        isUser(uid) &&
+        request.resource.data.role == resource.data.role
+      ) || isAdmin();
+
+      allow delete: if isUser(uid) || isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 2. games/{gameId}
+    // ─────────────────────────────────────────────────────────────────────────
+    match /games/{gameId} {
+      // Каталог доступен всем гостям сайта
+      allow read: if true;
+
+      // Создание и удаление игр разрешено только администраторам
+      allow create, delete: if isAdmin();
+
+      // Обновление: полный доступ у админа, а авторизованные пользователи
+      // могут обновлять только поля рейтинга при добавлении отзывов
+      allow update: if isAdmin() || (
+        isSignedIn() &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['avgRating', 'reviewCount'])
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 3. reviews/{reviewId}
+    // ─────────────────────────────────────────────────────────────────────────
+    match /reviews/{reviewId} {
+      allow read: if true;
+
+      // Отзыв может оставить только авторизованный автор под своим uid
+      allow create: if isSignedIn() && request.resource.data.userId == request.auth.uid;
+
+      // Редактировать может только автор
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        request.resource.data.userId == resource.data.userId;
+
+      // Удалить отзыв может автор или админ для модерации
+      allow delete: if (isSignedIn() && resource.data.userId == request.auth.uid) || isAdmin();
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 4. cart/{cartId} (формат ID: {userId}_{gameId})
+    // ─────────────────────────────────────────────────────────────────────────
+    match /cart/{cartId} {
+      allow read: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        cartId.matches('^' + request.auth.uid + '_.*')
+      );
+
+      allow create: if isSignedIn() &&
+        request.resource.data.userId == request.auth.uid &&
+        cartId.matches('^' + request.auth.uid + '_.*');
+
+      allow update: if isSignedIn() &&
+        resource.data.userId == request.auth.uid &&
+        request.resource.data.userId == request.auth.uid;
+
+      allow delete: if isSignedIn() && (
+        resource.data.userId == request.auth.uid ||
+        cartId.matches('^' + request.auth.uid + '_.*')
+      );
+    }
+
+    // ─────────────────────────────────────────────────────────────────────────
+    // 5. orders/{orderId}
+    // ─────────────────────────────────────────────────────────────────────────
+    match /orders/{orderId} {
+      // Пользователь видит только свои заказы, админ — все
+      allow read: if isSignedIn() && (resource.data.userId == request.auth.uid || isAdmin());
+
+      // Создание заказа со статусом 'pending'
+      allow create: if isSignedIn() &&
+        request.resource.data.userId == request.auth.uid &&
+        request.resource.data.status == 'pending';
+
+      // Изменять статус заказа и удалять может только админ
+      allow update, delete: if isAdmin();
+    }
+  }
+}

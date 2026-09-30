@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Game Hub — каталог компьютерных игр. Покупайте и открывайте лучшие игры для PC, PlayStation, Xbox и Nintendo." />
+  <title>Game Hub — Каталог компьютерных игр</title>
+
+  <!-- Design System & Styles -->
+  <link rel="stylesheet" href="css/tokens.css" />
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/header.css" />
+  <link rel="stylesheet" href="css/catalog.css" />
+</head>
+<body>
+  <!-- Site Header (Shared Component) -->
+  <header id="main-header" class="site-header" role="banner"></header>
+
+  <!-- Featured Poster (Auto-rotates randomly on every load) -->
+  <a href="#" class="hero-poster" id="hero-poster" style="display: none;" aria-label="Рекомендуемая игра"></a>
+
+  <!-- Catalog Section -->
+  <main class="container section" role="main">
+    <!-- Catalog Toolbar (Sort, Genres, Active Filters) -->
+    <section class="catalog-toolbar" aria-label="Панель фильтрации и сортировки">
+      <div class="toolbar-top-row">
+        <div class="catalog-heading-wrap">
+          <h2 class="catalog-title">Все игры</h2>
+          <span class="catalog-count" id="catalog-count">Загрузка...</span>
+        </div>
+
+        <!-- Sort dropdown -->
+        <div class="catalog-sort-wrap">
+          <label for="catalog-sort-select" class="sort-label">Сортировка:</label>
+          <select id="catalog-sort-select" class="select-input" aria-label="Сортировка каталога">
+            <option value="rating">По рейтингу</option>
+            <option value="date-desc">По дате выхода</option>
+            <option value="price-asc">Сначала дешевле</option>
+            <option value="price-desc">Сначала дороже</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Genre Pills Selector -->
+      <div class="genre-pills-row" id="genre-pills-container" role="group" aria-label="Фильтр по жанрам">
+        <!-- Injected by catalog.js -->
+      </div>
+
+      <!-- Active Filters Reset Bar -->
+      <div class="active-filters-bar" id="active-filters-bar" style="display: none;"></div>
+    </section>
+
+    <!-- Catalog Games Grid (3 cols desktop, 2 cols tablet, 1 col mobile) -->
+    <div class="games-grid" id="games-grid" aria-live="polite">
+      <!-- Injected by catalog.js -->
+    </div>
+
+    <!-- Empty State (Shown when search/filters return 0 results) -->
+    <div class="catalog-empty" id="catalog-empty-state" style="display: none;" role="status">
+      <h3 class="catalog-empty-title">Ничего не найдено</h3>
+      <p class="catalog-empty-text" id="empty-state-message">
+        По выбранным фильтрам не найдено ни одной игры.
+      </p>
+      <button type="button" class="btn btn-primary" id="btn-reset-filters">
+        Сбросить все фильтры
+      </button>
+    </div>
+
+    <!-- Pagination Cursor Control ("Показать еще") -->
+    <div class="pagination-wrap">
+      <button type="button" class="btn-show-more" id="btn-show-more" style="display: none;">
+        Показать еще
+      </button>
+    </div>
+  </main>
+
+  <!-- Scripts (ES6 Modules) -->
+  <script type="module" src="js/header.js"></script>
+  <script type="module" src="js/catalog.js"></script>
+</body>
+</html>
